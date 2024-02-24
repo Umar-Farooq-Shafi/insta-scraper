@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import dj_database_url
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,9 +87,9 @@ DATABASES = {
     # ),
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'koyebdb',
-        'USER': 'koyeb-adm',
-        'PASSWORD': 'Wvn4ziu7wQOj',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
         'HOST': 'ep-wandering-credit-a1v6rb9g.ap-southeast-1.pg.koyeb.app',
         'OPTIONS': {'sslmode': 'require'},
     }
