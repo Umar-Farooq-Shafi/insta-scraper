@@ -14,7 +14,7 @@ requests==2.25.1
 selenium==3.141.0
 sqlparse==0.4.1
 toml==0.10.2
-urllib3==1.26.3
+urllib3==1.26.18
 webdriver-manager==3.3.0
 setuptools==69.2.0
 dj_database_url==2.1.0
