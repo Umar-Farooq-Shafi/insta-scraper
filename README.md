@@ -27,11 +27,11 @@ python3 manage.py runserver
 ## start tailwind complier
 
 ```
-manage.py tailwind start
+python3 manage.py tailwind start
 ```
 
 ## build the tailwind for prod
 
 ```
-manage.py tailwind build
+python3 manage.py tailwind build
 ```
