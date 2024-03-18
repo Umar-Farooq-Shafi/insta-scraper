@@ -29,3 +29,9 @@ python3 manage.py runserver
 ```
 manage.py tailwind start
 ```
+
+## build the tailwind for prod
+
+```
+manage.py tailwind build
+```
