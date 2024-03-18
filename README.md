@@ -24,3 +24,8 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 
+## start tailwind complier
+
+```
+manage.py tailwind start
+```
