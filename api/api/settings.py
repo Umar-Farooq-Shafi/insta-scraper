@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': env('DATABASE_NAME'),
         'USER': env('DATABASE_USER'),
         'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': 'ep-wandering-credit-a1v6rb9g.ap-southeast-1.pg.koyeb.app',
+        'HOST': env('DATABASE_HOST'),
         'OPTIONS': {'sslmode': 'require'},
     }
 }
@@ -123,6 +123,33 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+# Create a LOGGING dictionary
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "logs/platform.log",
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': env('DJANGO_LOG_LEVEL', default='DEBUG'),
+            'propagate': False,
+        },
+    },
+}
 
 
 # Internationalization

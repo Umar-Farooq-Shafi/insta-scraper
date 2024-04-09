@@ -3,6 +3,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from .models import *
 import os
+from django.conf import settings
+import logging
+from pathlib import Path
+
+logger = logging.getLogger('django')
 
 # Selenium
 from selenium import webdriver
@@ -25,11 +30,13 @@ def autologin(driver, url, username, password):
 
 def scrap(request):
 
+    proj_dir = Path(settings.BASE_DIR).resolve().parent
+
     options = Options()
     options.headless = True
     options.add_argument("--window-size=1920,1080")
 
-    driver = webdriver.Chrome(options=options, executable_path="/Users/apple/Desktop/personal/insta-scraper/chromedriver/chromedriver")
+    driver = webdriver.Chrome(options=options, executable_path=str(proj_dir) + "/chromedriver/chromedriver")
 
     USERNAME = os.getenv("USERNAME")
     PASSWORD = os.getenv("PASSWORD")
