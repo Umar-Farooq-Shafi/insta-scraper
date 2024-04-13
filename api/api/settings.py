@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import dj_database_url
 import environ
+import os
 
 env = environ.Env()
 environ.Env.read_env()
@@ -34,6 +35,8 @@ ALLOWED_HOSTS = []
 
 TAILWIND_APP_NAME = 'theme'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Application definition
 

@@ -36,7 +36,9 @@ def scrap(request):
     options.headless = True
     options.add_argument("--window-size=1920,1080")
 
-    driver = webdriver.Chrome(options=options, executable_path=str(proj_dir) + "/chromedriver/chromedriver")
+    driver = webdriver.Chrome(options=options)
+
+    driver.set_page_load_timeout(30)
 
     USERNAME = os.getenv("USERNAME")
     PASSWORD = os.getenv("PASSWORD")
