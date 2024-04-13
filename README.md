@@ -16,10 +16,16 @@ source django-env/bin/activate
 pip3 install -r requirements.txt
 ```
 
+## Open Jupyter notebook
+```
+jupyter notebook
+```
+
 ## Next, navigate into the newly created project folder. Then, start a new Django app. We will also run migrations and start up the server:
 
 ```
-cd api
+cd src
+celery -A api worker --beat -l INFO
 python3 manage.py migrate
 python3 manage.py runserver
 ```
