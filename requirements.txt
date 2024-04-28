@@ -25,5 +25,5 @@ django-celery-results
 python-decouple
 redis
 jupyter
-selenium
+selenium==4.9.0
 beautifulsoup4

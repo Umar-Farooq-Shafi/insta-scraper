@@ -1,19 +1,19 @@
-# Installation
+## Install all dependencies:
 
 ```
-python3 -m venv django-env
+python3 -m pip install -r requirements.txt
 ```
+
+## start redis server
+```
+docker composer up
+```
+
 
 ## activate virtual env
 
 ```
 source django-env/bin/activate
-```
-
-## Install all dependencies:
-
-```
-pip3 install -r requirements.txt
 ```
 
 ## Open Jupyter notebook
