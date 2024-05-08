@@ -4,9 +4,9 @@ from .models import *
 import logging
 from decouple import config
 
-from utils.bot import AutoLikeBot
-from utils.filter import MyCustomFilter
-from utils.strategy import RunForeverWithBreaks
+from .bot import AutoLikeBot
+from .filter import MyCustomFilter
+from .strategy import RunForeverWithBreaks
 
 from django.contrib import messages
 
