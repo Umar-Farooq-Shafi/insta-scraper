@@ -52,10 +52,8 @@ def parse_explore(str_in):
         media_id = media['id']
         shortcode = media['code']
         like_count = media['like_count']
-        caption = ""
-        if media['caption']:
-            caption = media['caption']['text']
-        comment_count = len(media['comments']) if 'comments' in media else 0
+        caption = media.get('caption', {}).get('text', "")  # Safely get caption text
+        comment_count = len(media.get('comments', []))
         taken_at_time = datetime.utcfromtimestamp(int(media['taken_at']))
         is_video = media['media_type'] != 1
         owner_id = media['user']['pk']
@@ -64,14 +62,15 @@ def parse_explore(str_in):
 
     posts = []
     json_tree = json.loads(str_in)
-    sectional_items = json_tree['sectional_items']
+    sectional_items = json_tree.get('sectional_items', [])  # Safely get sectional_items, default to empty list
     for item in sectional_items:
-        if 'medias' in item['layout_content']:
-            for media_item in item['layout_content']['medias']:
+        layout_content = item.get('layout_content', {})
+        if 'medias' in layout_content:
+            for media_item in layout_content['medias']:
                 posts.append(pass_media(media_item))
-        if 'fill_items' in item['layout_content']:
-            for media_item in item['layout_content']['fill_items']:
+        if 'fill_items' in layout_content:
+            for media_item in layout_content['fill_items']:
                 posts.append(pass_media(media_item))
-        if 'two_by_two_item' in item['layout_content'] and 'media' in item['layout_content']['two_by_two_item']:
-            posts.append(pass_media(item['layout_content']['two_by_two_item']))
-    return list(filter(lambda p: (p is not None), posts))
+        if 'two_by_two_item' in layout_content and 'media' in layout_content['two_by_two_item']:
+            posts.append(pass_media(layout_content['two_by_two_item']))
+    return list(filter(None, posts))  # Filter out None values (invalid posts)

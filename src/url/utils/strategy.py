@@ -1,8 +1,8 @@
 import logging
 from abc import abstractmethod
 
-from tracker import post_tracker
-from utils import rand_wait_min
+from .tracker import post_tracker
+from .utils import rand_wait_min
 
 logger = logging.getLogger()
 

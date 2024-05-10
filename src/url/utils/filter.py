@@ -1,8 +1,8 @@
 from datetime import timedelta, datetime
 from typing import Collection
 
-from post_parser import IgPost
-from tracker import post_tracker
+from .post_parser import IgPost
+from .tracker import post_tracker
 
 
 class PostFilter:

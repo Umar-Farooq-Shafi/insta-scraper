@@ -1,18 +1,18 @@
 import logging
 import random
+import time
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-import config
-from filter import PostFilter
-from post_parser import parse_explore
-from strategy import RunForeverStrategy
-from tracker import post_tracker
-from utils import rand_wait_sec
+from decouple import config
+from .filter import PostFilter
+from .post_parser import parse_explore
+from .strategy import RunForeverStrategy
+from .tracker import post_tracker
 
 logging.basicConfig(handlers=[logging.StreamHandler()],
                     level=logging.INFO,
@@ -29,8 +29,7 @@ class AutoLikeBot:
         self.running_strategy = running_strategy
 
     def __enter__(self):
-        if not config.SKIP_LOGIN:
-            self.log_in()
+        self.log_in()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -59,23 +58,26 @@ class AutoLikeBot:
             max_id += 1
 
     def log_in(self):
-        self.driver.get(url)
+        self.driver.get("https://www.instagram.com/")
 
         USERNAME = config("INSTA_USERNAME")
         PASSWORD = config("INSTA_PASSWORD")
+
+        logging.error(USERNAME)
+        logging.error(PASSWORD)
 
         try:
             self.wait_until(EC.presence_of_element_located((By.NAME, 'username')))
 
             try:
-                self.driver.find_element_by_name('username').send_keys(USERNAME)
+                self.driver.find_element(By.NAME, 'username').send_keys(USERNAME)
 
-                password_input = WebDriverWait(driver, 10).until(
+                password_input = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, "//input[@type='password']"))
                 )
 
                 password_input.send_keys(PASSWORD)
-                
+
                 form_element = password_input.find_element(By.XPATH, ".//ancestor::form")
                 form_element.find_element(By.XPATH, ".//*[@type='submit']").click()
 
@@ -87,15 +89,14 @@ class AutoLikeBot:
             pass
 
         try:
-            # remember this browser prompt
-            self.driver.find_element_by_xpath(
-                '//*[@id="react-root"]/section/main/div/div/div/section/div/button').click()
+            # Remember this browser prompt
+            self.driver.find_element(By.XPATH, '//*[@id="react-root"]/section/main/div/div/div/section/div/button').click()
         except NoSuchElementException:
             pass
 
         try:
-            # turn on notifications prompt
-            self.driver.find_element_by_xpath("/html/body/div[4]/div/div/div/div[3]/button[2]").click()
+            # Turn on notifications prompt
+            self.driver.find_element(By.XPATH, "/html/body/div[4]/div/div/div/div[3]/button[2]").click()
             logger.debug("Skipping turn on notifications")
         except NoSuchElementException:
             pass
@@ -103,18 +104,18 @@ class AutoLikeBot:
     def fetch_posts_from_explore(self, max_id=0):
         text = self.load_pre_from_url(
             f"https://www.instagram.com/explore/grid/?is_prefetch=false&omit_cover_media=false&module=explore_popular&use_sectional_payload=true&cluster_id=explore_all%3A0&include_fixed_destinations=true&max_id={max_id}")
-        
+
         return parse_explore(text)
 
     def load_pre_from_url(self, url):
         self.open_and_switch_to_tab(url)
         try:
-            self.wait_until(ec.presence_of_element_located((By.TAG_NAME, 'pre')), timeout=7)
-            return self.driver.find_element_by_tag_name('pre').text
+            self.wait_until(EC.presence_of_element_located((By.TAG_NAME, 'pre')), timeout=7)
+            return self.driver.find_element(By.TAG_NAME, 'pre').text
         finally:
             self.close_and_open_tab()
 
-    # we will be opening tabs quite often so following methods will be used a lot
+    # We will be opening tabs quite often so following methods will be used a lot
     def open_and_switch_to_tab(self, url):
         handles = self.driver.window_handles
         self.driver.execute_script(f"window.open('{url}');")
@@ -129,14 +130,14 @@ class AutoLikeBot:
 
         self.open_and_switch_to_tab(post.post_link)
         try:
-            self.wait_until(ec.presence_of_element_located((By.CLASS_NAME, 'fr66n')))
-            self.driver.find_element_by_class_name('fr66n').click()
+            self.wait_until(EC.presence_of_element_located((By.CLASS_NAME, 'fr66n')))
+            self.driver.find_element(By.CLASS_NAME, 'fr66n').click()
             post_tracker.liked_post(post)
             logger.info(f"Liked {post}")
-            rand_wait_sec()
+            time.sleep(rand_wait_sec())  # Replace rand_wait_sec with your actual random wait function
             return True
 
-        # post might get removed
+        # Post might get removed
         except (NoSuchElementException, TimeoutException):
             return False
         finally:
