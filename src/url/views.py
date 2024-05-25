@@ -1,7 +1,6 @@
 # Django
 from django.http import HttpResponseRedirect
 from .models import *
-import logging
 from decouple import config
 from pathlib import Path
 from selenium.webdriver import ChromeOptions, Chrome

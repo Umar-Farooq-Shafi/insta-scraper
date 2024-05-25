@@ -42,11 +42,8 @@ class AutoLikeBot:
 
         while True:
             try:
-                posts = self.fetch_posts_from_explore(max_id)
-            except TimeoutException:
-                continue
-            random.shuffle(posts)
-            for post in posts:
+                post = self.fetch_posts_from_explore()
+
                 if self.post_filter.should_like(post):
                     self.like_post(post)
 
@@ -55,6 +52,9 @@ class AutoLikeBot:
                 else:
                     post_tracker.skipped_post(post)
 
+            except TimeoutException:
+                continue
+                
             max_id += 1
 
     def log_in(self):
@@ -62,9 +62,6 @@ class AutoLikeBot:
 
         USERNAME = config("INSTA_USERNAME")
         PASSWORD = config("INSTA_PASSWORD")
-
-        logging.error(USERNAME)
-        logging.error(PASSWORD)
 
         try:
             self.wait_until(EC.presence_of_element_located((By.NAME, 'username')))
@@ -101,17 +98,18 @@ class AutoLikeBot:
         except NoSuchElementException:
             pass
 
-    def fetch_posts_from_explore(self, max_id=0):
-        text = self.load_pre_from_url(
-            f"https://www.instagram.com/explore/grid/?is_prefetch=false&omit_cover_media=false&module=explore_popular&use_sectional_payload=true&cluster_id=explore_all%3A0&include_fixed_destinations=true&max_id={max_id}")
+    def fetch_posts_from_explore(self):
+        text = self.load_pre_from_url(f"https://www.instagram.com/reel/Ct-RoGKI9c7/")
 
         return parse_explore(text)
 
     def load_pre_from_url(self, url):
         self.open_and_switch_to_tab(url)
         try:
-            self.wait_until(EC.presence_of_element_located((By.TAG_NAME, 'pre')), timeout=7)
-            return self.driver.find_element(By.TAG_NAME, 'pre').text
+            like_path = '//*[@id="mount_0_0_He"]/div/div/div[2]/div/div/div[1]/div[1]/div[2]/section/main/div/div[1]/div/div[2]/div/div[3]/section[1]/div[1]/span[1]/div'
+
+            self.wait_until(EC.presence_of_element_located((By.XPATH, like_path)), timeout=7)
+            return self.driver.find_element(By.XPATH, like_path)
         finally:
             self.close_and_open_tab()
 
